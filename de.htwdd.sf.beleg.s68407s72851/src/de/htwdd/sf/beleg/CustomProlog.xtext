@@ -1,0 +1,9 @@
+grammar de.htwdd.sf.beleg.CustomProlog with org.eclipse.xtext.common.Terminals
+
+generate customProlog "http://www.htwdd.de/sf/beleg/CustomProlog"
+
+Model:
+	greetings+=Greeting*;
+	
+Greeting:
+	'Hello' name=ID '!';

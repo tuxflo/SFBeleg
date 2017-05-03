@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+	<extension point="org.eclipse.emf.ecore.generated_package">
+		<package 
+			uri = "http://www.htwdd.de/sf/beleg/CustomProlog"
+			class = "de.htwdd.sf.beleg.customProlog.CustomPrologPackage"
+			genModel = "model/generated/CustomProlog.genmodel" />
+	</extension>
+</plugin>

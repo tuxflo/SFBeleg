@@ -3,7 +3,72 @@ grammar de.htwdd.sf.beleg.CustomProlog with org.eclipse.xtext.common.Terminals
 generate customProlog "http://www.htwdd.de/sf/beleg/CustomProlog"
 
 Model:
-	greetings+=Greeting*;
+	expressions+=Prologdsl*;
 	
-Greeting:
-	'Hello' name=ID '!';
+
+Prologdsl:
+	program=Program exquery=Exquery
+;
+
+Exquery:
+	exquery='?-'query=Query	
+;
+	
+Program:
+	program=Fact+
+;
+
+Clause:
+	fact=Fact | rule=Rule
+;
+
+Fact:
+	predicate=Predicate '.'
+;
+
+Predicate:
+	functor=Functor '(' term+=Term (',' term+=Term)* ')'  
+;
+
+Term:
+	atom=Atom | list=List
+;
+
+Atom:
+	ident=IDENT | number=INT | variable=VARIABLE
+;
+
+terminal IDENT:
+	('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*	
+;
+
+
+terminal VARIABLE:
+	('A'..'Z')	
+;
+
+List:
+	list='[]' | NonEmptyList
+;
+
+NonEmptyList:
+	nonemptylist+='[' folge=Folge ']' | nonemptylist+='[' (atom=Atom '|' term=Term) ']'
+	
+;
+
+Folge:
+	atom+=Atom (',' atom+=Atom)*
+;
+
+Functor:
+	functor=IDENT
+;
+
+Rule:
+	predicate+=':-'query=Query
+;
+
+Query:
+	predicat+=Predicate (',' p+=Predicate)*
+;
+

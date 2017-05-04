@@ -5,17 +5,19 @@ generate customProlog "http://www.htwdd.de/sf/beleg/CustomProlog"
 Model:
 	expressions+=Prologdsl*;
 	
-
 Prologdsl:
 	program=Program exquery=Exquery
 ;
 
-Exquery:
-	exquery='?-'query=Query	
-;
-	
 Program:
-	program=Fact+
+	clauses+=Clause+
+;
+Exquery:
+	exquery='?-'query=Query	'.'
+;
+
+Query:
+	predicat+=Predicate (',' p+=Predicate)*
 ;
 
 Clause:
@@ -26,8 +28,16 @@ Fact:
 	predicate=Predicate '.'
 ;
 
+Rule:
+	predicate+=':-'query=Query
+;
+
 Predicate:
 	functor=Functor '(' term+=Term (',' term+=Term)* ')'  
+;
+
+Functor:
+	functor=IDENT
 ;
 
 Term:
@@ -35,16 +45,7 @@ Term:
 ;
 
 Atom:
-	ident=IDENT | number=INT | variable=VARIABLE
-;
-
-terminal IDENT:
-	('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*	
-;
-
-
-terminal VARIABLE:
-	('A'..'Z')	
+	ident=IDENT | number=NUMBER | variable=VARIABLE
 ;
 
 List:
@@ -60,15 +61,15 @@ Folge:
 	atom+=Atom (',' atom+=Atom)*
 ;
 
-Functor:
-	functor=IDENT
+terminal IDENT:
+	('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*	
 ;
 
-Rule:
-	predicate+=':-'query=Query
+
+terminal VARIABLE:
+	('A'..'Z')	
 ;
 
-Query:
-	predicat+=Predicate (',' p+=Predicate)*
+terminal NUMBER:
+	INT
 ;
-

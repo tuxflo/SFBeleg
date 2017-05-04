@@ -4,12 +4,27 @@
 package de.htwdd.sf.beleg.ui.outline
 
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
+import de.htwdd.sf.beleg.customProlog.Program
+import de.htwdd.sf.beleg.customProlog.Prologdsl
+import de.htwdd.sf.beleg.customProlog.Model
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode
+import de.htwdd.sf.beleg.customProlog.Term
+import de.htwdd.sf.beleg.customProlog.Functor
+import de.htwdd.sf.beleg.customProlog.Predicate
+import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
+import de.htwdd.sf.beleg.customProlog.Fact
+import de.htwdd.sf.beleg.customProlog.Atom
+import de.htwdd.sf.beleg.customProlog.Clause
+import org.eclipse.emf.common.util.EList
+import de.htwdd.sf.beleg.customProlog.Query
 
 /**
  * Customization of the default outline structure.
- *
+ * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#outline
  */
 class CustomPrologOutlineTreeProvider extends DefaultOutlineTreeProvider {
-
+	def createNode(IOutlineNode node, Term t) {
+		createChildren(node, t)
+	}
 }

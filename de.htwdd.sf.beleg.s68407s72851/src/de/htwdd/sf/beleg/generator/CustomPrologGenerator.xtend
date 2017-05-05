@@ -7,6 +7,16 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.htwdd.sf.beleg.customProlog.Atom
+import de.htwdd.sf.beleg.customProlog.Fact
+import org.eclipse.emf.ecore.EObject
+import de.htwdd.sf.beleg.customProlog.Clause
+import de.htwdd.sf.beleg.customProlog.Predicate
+import de.htwdd.sf.beleg.customProlog.Term
+import de.htwdd.sf.beleg.customProlog.Query
+import de.htwdd.sf.beleg.customProlog.Prologdsl
+import de.htwdd.sf.beleg.customProlog.Program
+import de.htwdd.sf.beleg.customProlog.Model
 
 /**
  * Generates code from your model files on save.
@@ -16,10 +26,48 @@ import org.eclipse.xtext.generator.IGeneratorContext
 class CustomPrologGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(Greeting)
-//				.map[name]
-//				.join(', '))
+		var text = ""
+		for(e : resource.allContents.toIterable)
+			text += e.transpile + " "
+		println(text)
+	}
+
+	def dispatch transpile(EObject e) {
+		return "Object"
+	}
+	def dispatch transpile(Atom a) {
+		return "Atom"
+	}
+	
+	def dispatch transpile(Clause c) {
+		return "Clause"
+	}
+	
+	def dispatch transpile(Predicate p) {
+		return "Predicate"
+	}
+	
+	def dispatch transpile(Fact f) {
+		return "Fact"
+	}
+	
+	def dispatch transpile(Term t) {
+		return "Term"
+	}
+
+	def dispatch transpile(Query q) {
+		return "Query"
+	}
+
+	def dispatch transpile(Prologdsl p) {
+		return "Prologdsl"
+	}
+
+	def dispatch transpile(Program p) {
+		return "Program"
+	}
+
+	def dispatch transpile(Model m) {
+		return "Model"
 	}
 }

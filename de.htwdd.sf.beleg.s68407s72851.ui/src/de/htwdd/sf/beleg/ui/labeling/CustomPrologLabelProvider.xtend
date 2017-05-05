@@ -18,6 +18,7 @@ import de.htwdd.sf.beleg.services.CustomPrologGrammarAccess.PrologdslElements
 import de.htwdd.sf.beleg.customProlog.Prologdsl
 import de.htwdd.sf.beleg.customProlog.Query
 import de.htwdd.sf.beleg.customProlog.Atom
+import de.htwdd.sf.beleg.customProlog.Rule
 
 /**
  * Provides labels for EObjects.
@@ -69,18 +70,18 @@ class CustomPrologLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	def text(Atom a) {
-		switch a {
-			case a.ident !== null: return a.ident
-			case a.number !== null: return a.number
-			case a.variable !== null: return a.variable
-		}
+		return a.ident
 	}
-
+	
 	def text(Term t) {
 		'Term'
 	}
 
 	def text(Query q) {
 		'Query'
+	}
+	
+	def text(Rule r) {
+		'Rule'
 	}
 }

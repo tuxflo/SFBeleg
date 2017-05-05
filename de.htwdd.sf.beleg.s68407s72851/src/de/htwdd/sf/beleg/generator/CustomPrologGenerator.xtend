@@ -17,6 +17,8 @@ import de.htwdd.sf.beleg.customProlog.Query
 import de.htwdd.sf.beleg.customProlog.Prologdsl
 import de.htwdd.sf.beleg.customProlog.Program
 import de.htwdd.sf.beleg.customProlog.Model
+import org.eclipse.emf.common.util.EList
+import de.htwdd.sf.beleg.customProlog.Rule
 
 /**
  * Generates code from your model files on save.
@@ -27,40 +29,69 @@ class CustomPrologGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		var text = ""
-		for(e : resource.allContents.toIterable)
+		for (e : resource.allContents.toIterable.filter(Prologdsl))
 			text += e.transpile + " "
 		println(text)
 	}
 
-	def dispatch transpile(EObject e) {
-		return "Object"
+	def transpileClauses(EList<Clause> clauses) {
+		var ret = ""
+		ret += '('
+		for (Clause c : clauses) {
+			if (c.fact?.predicate !== null) {
+				ret += '(' + transpilePredicates(c.fact?.predicate) + ')' // fancy ? operator checks if fact is null :)
+				ret += '\n'
+			}
+			ret += transpileRule(c?.rule)
+		}
+		return ret
 	}
-	def dispatch transpile(Atom a) {
-		return "Atom"
+
+	def transpileRule(Rule rule) {
+		var ret = ""
+		if (rule !== null) {
+			ret += '('
+			ret += transpilePredicates(rule.rule)
+			ret += transpileQuery(rule.query)
+			ret += ')'
+		}
+		return ret
 	}
-	
-	def dispatch transpile(Clause c) {
-		return "Clause"
+
+	def transpilePredicates(Predicate predicate) {
+		var ret = ""
+		if (predicate !== null && predicate.functor.functor !== null) {
+			ret += '(' + predicate.functor.functor + ' '
+			for (Term t : predicate?.term)
+				ret += ' ' + t.atom.ident
+			ret += ')'
+		}
+		return ret
 	}
-	
-	def dispatch transpile(Predicate p) {
-		return "Predicate"
-	}
-	
+
 	def dispatch transpile(Fact f) {
 		return "Fact"
 	}
-	
+
 	def dispatch transpile(Term t) {
 		return "Term"
 	}
 
-	def dispatch transpile(Query q) {
-		return "Query"
+	def transpileQuery(Query q) {
+		var ret = "("
+		for (p : q.p) {
+			ret += transpilePredicates(p)
+		}
+		ret += ')'
+		return ret
+
 	}
 
 	def dispatch transpile(Prologdsl p) {
-		return "Prologdsl"
+		var ret = '( prolog (quote ' + transpileClauses(p.program.clauses) + ')' + '\n' + '(quote ' +
+			transpileQuery(p?.exquery.query)
+		ret += '))'
+		return ret
 	}
 
 	def dispatch transpile(Program p) {

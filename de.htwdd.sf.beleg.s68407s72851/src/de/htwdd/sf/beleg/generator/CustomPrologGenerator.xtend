@@ -3,22 +3,17 @@
  */
 package de.htwdd.sf.beleg.generator
 
+import de.htwdd.sf.beleg.customProlog.Clause
+import de.htwdd.sf.beleg.customProlog.Predicate
+import de.htwdd.sf.beleg.customProlog.Prologdsl
+import de.htwdd.sf.beleg.customProlog.Query
+import de.htwdd.sf.beleg.customProlog.Rule
+import de.htwdd.sf.beleg.customProlog.Term
+import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.htwdd.sf.beleg.customProlog.Atom
-import de.htwdd.sf.beleg.customProlog.Fact
-import org.eclipse.emf.ecore.EObject
-import de.htwdd.sf.beleg.customProlog.Clause
-import de.htwdd.sf.beleg.customProlog.Predicate
-import de.htwdd.sf.beleg.customProlog.Term
-import de.htwdd.sf.beleg.customProlog.Query
-import de.htwdd.sf.beleg.customProlog.Prologdsl
-import de.htwdd.sf.beleg.customProlog.Program
-import de.htwdd.sf.beleg.customProlog.Model
-import org.eclipse.emf.common.util.EList
-import de.htwdd.sf.beleg.customProlog.Rule
 
 /**
  * Generates code from your model files on save.
@@ -39,22 +34,21 @@ class CustomPrologGenerator extends AbstractGenerator {
 		ret += '('
 		for (Clause c : clauses) {
 			if (c.fact?.predicate !== null) {
-				ret += '(' + transpilePredicates(c.fact?.predicate) + ')' // fancy ? operator checks if fact is null :)
+				ret += '(' + transpilePredicates(c.fact.predicate) + ')' ?: "" // fancy ? operator checks if fact is null :)
 				ret += '\n'
 			}
-			ret += transpileRule(c?.rule)
+			ret += c.rule?.transpileRule ?: ""
+		// ret += transpileRule(c?.rule)
 		}
 		return ret
 	}
 
 	def transpileRule(Rule rule) {
 		var ret = ""
-		if (rule !== null) {
-			ret += '('
-			ret += transpilePredicates(rule.rule)
-			ret += transpileQuery(rule.query)
-			ret += ')'
-		}
+		ret += '('
+		ret += transpilePredicates(rule.rule)
+		ret += transpileQuery(rule.query)
+		ret += ')'
 		return ret
 	}
 
@@ -69,14 +63,6 @@ class CustomPrologGenerator extends AbstractGenerator {
 		return ret
 	}
 
-	def dispatch transpile(Fact f) {
-		return "Fact"
-	}
-
-	def dispatch transpile(Term t) {
-		return "Term"
-	}
-
 	def transpileQuery(Query q) {
 		var ret = "("
 		for (p : q.p) {
@@ -84,21 +70,13 @@ class CustomPrologGenerator extends AbstractGenerator {
 		}
 		ret += ')'
 		return ret
-
 	}
 
-	def dispatch transpile(Prologdsl p) {
-		var ret = '( prolog (quote ' + transpileClauses(p.program.clauses) + ')' + '\n' + '(quote ' +
-			transpileQuery(p?.exquery.query)
+	def transpile(Prologdsl p) {
+		var ret = '( prolog (quote '
+		ret += transpileClauses(p.program.clauses)
+		ret += '\n' + '(quote ' + transpileQuery(p?.exquery.query)
 		ret += '))'
 		return ret
-	}
-
-	def dispatch transpile(Program p) {
-		return "Program"
-	}
-
-	def dispatch transpile(Model m) {
-		return "Model"
 	}
 }

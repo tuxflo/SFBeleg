@@ -13,4 +13,4 @@ die Antwort lautet:
 ```
 N = meier
 ```
-![Bilder der Lösung](prolog.jpg)
+![Bilder der Lösung](prolog_v1.jpg)

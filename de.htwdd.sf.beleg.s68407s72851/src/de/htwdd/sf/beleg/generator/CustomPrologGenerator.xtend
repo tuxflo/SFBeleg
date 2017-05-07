@@ -29,7 +29,6 @@ class CustomPrologGenerator extends AbstractGenerator {
 		text += "\n]"
 		println(text)
 		fsa.generateFile("beleg_prolog.lsp", text)
-		
 	}
 
 	def transpileClauses(EList<Clause> clauses) {
@@ -37,19 +36,16 @@ class CustomPrologGenerator extends AbstractGenerator {
 		ret += '('
 		for (Clause c : clauses) {
 			if (c.fact?.predicate !== null) {
-				ret += '(' + transpilePredicates(c.fact.predicate) + ')\n' ?: "" // fancy ? operator checks if fact is null :)
-				// ret += '\n'
+				ret += '(' + transpilePredicates(c?.fact?.predicate) + ')\n' ?: "" // fancy ? operator checks if fact is null :)
 			}
 			ret += c.rule?.transpileRule ?: ""
-		// ret += transpileRule(c?.rule)
 		}
 		ret += ")"
 		return ret
 	}
 
 	def transpileRule(Rule rule) {
-		var ret = ""
-		ret += '('
+		var ret = "("
 		ret += transpilePredicates(rule.rule)
 		ret += transpileQuery(rule.query)
 		ret += ')'
@@ -59,9 +55,9 @@ class CustomPrologGenerator extends AbstractGenerator {
 	def transpilePredicates(Predicate predicate) {
 		var ret = ""
 		if (predicate !== null && predicate.functor.functor !== null) {
-			ret += '(' + predicate.functor.functor + ' '
+			ret += '(' + predicate?.functor.functor + ' ' ?: ""
 			for (Term t : predicate?.term)
-				ret += ' ' + t.atom.ident
+				ret += ' ' + t?.atom?.ident ?: ""
 			ret += ')'
 		}
 		return ret

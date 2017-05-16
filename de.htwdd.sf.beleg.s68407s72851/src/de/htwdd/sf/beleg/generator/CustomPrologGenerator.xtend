@@ -28,7 +28,7 @@ class CustomPrologGenerator extends AbstractGenerator {
 			text += e.transpile + " "
 		text += "\n]"
 		println(text)
-		fsa.generateFile("beleg_prolog.lsp", text)
+		fsa.generateFile("prolog_s68407s72851.lsp", text)
 	}
 
 	def transpileClauses(EList<Clause> clauses) {

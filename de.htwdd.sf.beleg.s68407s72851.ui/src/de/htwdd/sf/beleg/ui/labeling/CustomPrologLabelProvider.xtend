@@ -19,6 +19,7 @@ import de.htwdd.sf.beleg.customProlog.Prologdsl
 import de.htwdd.sf.beleg.customProlog.Query
 import de.htwdd.sf.beleg.customProlog.Atom
 import de.htwdd.sf.beleg.customProlog.Rule
+import de.htwdd.sf.beleg.customProlog.NonEmptyList
 
 /**
  * Provides labels for EObjects.
@@ -62,7 +63,7 @@ class CustomPrologLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	def text(Functor f) {
-		'Functor "' + f.functor + '"'
+		'Functor "' + f.funcName + '"'
 	}
 
 	def text(Fact f) {
@@ -83,5 +84,9 @@ class CustomPrologLabelProvider extends DefaultEObjectLabelProvider {
 	
 	def text(Rule r) {
 		'Rule'
+	}
+	
+	def text(NonEmptyList nel) {
+		'NonEmptyList'
 	}
 }

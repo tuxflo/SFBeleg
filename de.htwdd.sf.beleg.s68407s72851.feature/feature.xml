@@ -2,20 +2,20 @@
 <feature
       id="de.htwdd.sf.beleg.s68407s72851.feature"
       label="CustomProlog Feature "
-      version="1.0.0.qualifier">
+      version="1.0.0.1">
 
    <plugin
          id="de.htwdd.sf.beleg.s68407s72851"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="de.htwdd.sf.beleg.s68407s72851.ui"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
@@ -172,7 +172,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="org.eclipse.xtext.generator"
@@ -457,13 +456,6 @@
 
    <plugin
          id="org.eclipse.xtext.xbase.lib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtext.xbase.lib.gwt"
          download-size="0"
          install-size="0"
          version="0.0.0"

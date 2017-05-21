@@ -14,10 +14,6 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.htwdd.sf.beleg.customProlog.Folge
-import de.htwdd.sf.beleg.customProlog.Atom
-import de.htwdd.sf.beleg.customProlog.List
-import de.htwdd.sf.beleg.customProlog.NonEmptyList
 
 /**
  * Generates code from your model files on save.

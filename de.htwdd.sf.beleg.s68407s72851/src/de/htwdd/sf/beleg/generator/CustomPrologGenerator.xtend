@@ -38,17 +38,21 @@ class CustomPrologGenerator extends AbstractGenerator {
 			if (c.fact?.predicate !== null) {
 				ret += '(' + transpilePredicates(c?.fact?.predicate) + ')\n' ?: "" // fancy ? operator checks if fact is null :)
 			}
-			ret += c.rule?.transpileRule ?: ""
+			if (c.rule !== null) {
+				ret += "("
+				ret += c.rule.transpileRule
+				ret += ")"
+			}
 		}
 		ret += ")"
 		return ret
 	}
 
 	def transpileRule(Rule rule) {
-		var ret = "("
+		var ret = ""
 		ret += transpilePredicates(rule.rule)
 		ret += transpileQuery(rule.query)
-		ret += ')'
+		ret += ''
 		return ret
 	}
 
@@ -66,16 +70,17 @@ class CustomPrologGenerator extends AbstractGenerator {
 	def transpileQuery(Query q) {
 		var ret = "("
 		for (p : q.p) {
-			ret += transpilePredicates(p)
+			if (p !== null)
+				ret += transpilePredicates(p)
 		}
 		ret += ')'
 		return ret
 	}
 
 	def transpile(Prologdsl p) {
-		var ret = '( prolog (quote '
+		var ret = '(prolog (quote '
 		ret += transpileClauses(p.program.clauses)
-		ret += ')'
+		ret += '\n'
 		ret += '(quote ' + transpileQuery(p?.exquery.query)
 		ret += '))'
 		return ret

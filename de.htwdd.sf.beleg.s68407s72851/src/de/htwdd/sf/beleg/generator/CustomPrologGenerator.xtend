@@ -14,6 +14,10 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.htwdd.sf.beleg.customProlog.Folge
+import de.htwdd.sf.beleg.customProlog.Atom
+import de.htwdd.sf.beleg.customProlog.List
+import de.htwdd.sf.beleg.customProlog.NonEmptyList
 
 /**
  * Generates code from your model files on save.
@@ -31,6 +35,68 @@ class CustomPrologGenerator extends AbstractGenerator {
 		fsa.generateFile("prolog_s68407s72851.lsp", text)
 	}
 
+/*  Liste -- nicht Funktionsfähig
+	
+	def transplitFolge(Folge folge) {
+		var ret = '(cons '
+				
+		if ( folge.atom.length() == 1 )
+			ret += folge.atom.get(0) + '()'
+			
+		else
+			ret += folge.atom.transplitRest
+					
+		ret += ')'
+		
+		return ret	
+	}
+	
+	def transplitRest(EList<Atom> atom) {
+		var ret = ""
+		var i = 0
+		if ( atom === null )
+			ret += '()'
+		else {
+			for (; atom !== null ; i++) {
+				ret += '(cons' + atom.last()
+				atom.remove(atom.last())
+			}
+			
+			ret += '()'
+			
+			for (; i > 0 ; i--) {
+				ret += ')'
+			}
+			
+		}
+		
+		return ret
+	}
+	
+	def transplitList(List list) {
+		var ret = ""
+		
+		if ( list === null )
+			ret += '()'
+		else {
+			ret += list.list.transplitNonEmptyList
+		}
+			
+		return ret
+	}
+	
+	def transplitNonEmptyList(NonEmptyList nonemptylist) {
+		var ret = ""
+		
+		if ( nonemptylist.folge !== null )
+			ret += nonemptylist.folge.transplitFolge
+		else {
+			ret += nonemptylist?.atom?.ident ?: ""
+		}
+		
+		return ret
+	}
+*/
 	def transpileClauses(EList<Clause> clauses) {
 		var ret = ""
 		ret += '('
@@ -58,8 +124,8 @@ class CustomPrologGenerator extends AbstractGenerator {
 
 	def transpilePredicates(Predicate predicate) {
 		var ret = ""
-		if (predicate !== null && predicate.functor.functor !== null) {
-			ret += '(' + predicate?.functor.functor + ' ' ?: ""
+		if (predicate !== null && predicate.functor.funcName !== null) {
+			ret += '(' + predicate?.functor.funcName + ' ' ?: ""
 			for (Term t : predicate?.term)
 				ret += ' ' + t?.atom?.ident ?: ""
 			ret += ')'

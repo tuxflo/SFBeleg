@@ -37,7 +37,7 @@ Predicate:
 ;
 
 Functor:
-	functor=IDENT
+	funcName=IDENT
 ;
 
 Term:
@@ -49,11 +49,11 @@ Atom:
 ;
 
 List:
-	list='[]' | NonEmptyList
+	{List} '[]' | list=NonEmptyList
 ;
 
 NonEmptyList:
-	nonemptylist+='[' folge=Folge ']' | nonemptylist+='[' (atom=Atom '|' term=Term) ']'
+	'[' folge=Folge ']' | '[' (atom=Atom '|' term=Term) ']'
 	
 ;
 

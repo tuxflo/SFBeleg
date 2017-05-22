@@ -31,97 +31,95 @@ class CustomPrologGenerator extends AbstractGenerator {
 		fsa.generateFile("prolog_s68407s72851.lsp", text)
 	}
 
-/*  Liste -- nicht Funktionsfähig
-	
-	def transplitFolge(Folge folge) {
-		var ret = '(cons '
-				
-		if ( folge.atom.length() == 1 )
-			ret += folge.atom.get(0) + '()'
-			
-		else
-			ret += folge.atom.transplitRest
-					
-		ret += ')'
-		
-		return ret	
-	}
-	
-	def transplitRest(EList<Atom> atom) {
-		var ret = ""
-		var i = 0
-		if ( atom === null )
-			ret += '()'
-		else {
-			for (; atom !== null ; i++) {
-				ret += '(cons' + atom.last()
-				atom.remove(atom.last())
-			}
-			
-			ret += '()'
-			
-			for (; i > 0 ; i--) {
-				ret += ')'
-			}
-			
-		}
-		
-		return ret
-	}
-	
-	def transplitList(List list) {
-		var ret = ""
-		
-		if ( list === null )
-			ret += '()'
-		else {
-			ret += list.list.transplitNonEmptyList
-		}
-			
-		return ret
-	}
-	
-	def transplitNonEmptyList(NonEmptyList nonemptylist) {
-		var ret = ""
-		
-		if ( nonemptylist.folge !== null )
-			ret += nonemptylist.folge.transplitFolge
-		else {
-			ret += nonemptylist?.atom?.ident ?: ""
-		}
-		
-		return ret
-	}
-*/
+	/*  Liste -- nicht Funktionsfähig
+	 * 	
+	 * 	def transplitFolge(Folge folge) {
+	 * 		var ret = '(cons '
+	 * 				
+	 * 		if ( folge.atom.length() == 1 )
+	 * 			ret += folge.atom.get(0) + '()'
+	 * 			
+	 * 		else
+	 * 			ret += folge.atom.transplitRest
+	 * 					
+	 * 		ret += ')'
+	 * 		
+	 * 		return ret	
+	 * 	}
+	 * 	
+	 * 	def transplitRest(EList<Atom> atom) {
+	 * 		var ret = ""
+	 * 		var i = 0
+	 * 		if ( atom === null )
+	 * 			ret += '()'
+	 * 		else {
+	 * 			for (; atom !== null ; i++) {
+	 * 				ret += '(cons' + atom.last()
+	 * 				atom.remove(atom.last())
+	 * 			}
+	 * 			
+	 * 			ret += '()'
+	 * 			
+	 * 			for (; i > 0 ; i--) {
+	 * 				ret += ')'
+	 * 			}
+	 * 			
+	 * 		}
+	 * 		
+	 * 		return ret
+	 * 	}
+	 * 	
+	 * 	def transplitList(List list) {
+	 * 		var ret = ""
+	 * 		
+	 * 		if ( list === null )
+	 * 			ret += '()'
+	 * 		else {
+	 * 			ret += list.list.transplitNonEmptyList
+	 * 		}
+	 * 			
+	 * 		return ret
+	 * 	}
+	 * 	
+	 * 	def transplitNonEmptyList(NonEmptyList nonemptylist) {
+	 * 		var ret = ""
+	 * 		
+	 * 		if ( nonemptylist.folge !== null )
+	 * 			ret += nonemptylist.folge.transplitFolge
+	 * 		else {
+	 * 			ret += nonemptylist?.atom?.ident ?: ""
+	 * 		}
+	 * 		
+	 * 		return ret
+	 * 	}
+	 */
 	def transpileClauses(EList<Clause> clauses) {
 		var ret = ""
-		ret += '('
+		ret += ''
 		for (Clause c : clauses) {
-			if (c.fact?.predicate !== null) {
-				ret += '(' + transpilePredicates(c?.fact?.predicate) + ')\n' ?: "" // fancy ? operator checks if fact is null :)
-			}
-			if (c.rule !== null) {
-				ret += "("
+			if (c.fact === null) {
 				ret += c.rule.transpileRule
-				ret += ")"
+			}
+			if (c.fact?.predicate !== null && c.fact !== null) {
+				ret += '(' + transpilePredicates(c.fact.predicate) + ')\n' // fancy ? operator checks if fact is null :)
 			}
 		}
-		ret += ")"
+		ret += ')'
 		return ret
 	}
 
 	def transpileRule(Rule rule) {
-		var ret = ""
+		var ret = "("
 		ret += transpilePredicates(rule.rule)
 		ret += transpileQuery(rule.query)
-		ret += ''
+		ret += ')'
 		return ret
 	}
 
 	def transpilePredicates(Predicate predicate) {
 		var ret = ""
 		if (predicate !== null && predicate.functor.funcName !== null) {
-			ret += '(' + predicate?.functor.funcName + ' ' ?: ""
+			ret += '(' + predicate.functor.funcName
 			for (Term t : predicate?.term)
 				ret += ' ' + t?.atom?.ident ?: ""
 			ret += ')'
@@ -130,20 +128,27 @@ class CustomPrologGenerator extends AbstractGenerator {
 	}
 
 	def transpileQuery(Query q) {
-		var ret = "("
-		for (p : q.p) {
-			if (p !== null)
-				ret += transpilePredicates(p)
+		var ret = ""
+		if (q !== null) {
+			ret = ""
+			for (p : q.p) {
+				if (p !== null)
+					ret += transpilePredicates(p)
+			}
+			ret += ''
 		}
-		ret += ')'
 		return ret
 	}
 
 	def transpile(Prologdsl p) {
 		var ret = '(prolog (quote '
+		ret += '('
 		ret += transpileClauses(p.program.clauses)
+		ret += ')'
 		ret += '\n'
-		ret += '(quote ' + transpileQuery(p?.exquery.query)
+		ret += '(quote (' + transpileQuery(p?.exquery.query)
+		if (p.exquery !== null)
+			ret += ')'
 		ret += '))'
 		return ret
 	}

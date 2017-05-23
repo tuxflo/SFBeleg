@@ -2,7 +2,7 @@
 <feature
       id="de.htwdd.sf.beleg.s68407s72851.feature"
       label="CustomProlog Feature "
-      version="1.0.0.1">
+      version="1.0.0.qualifier">
 
    <plugin
          id="de.htwdd.sf.beleg.s68407s72851"

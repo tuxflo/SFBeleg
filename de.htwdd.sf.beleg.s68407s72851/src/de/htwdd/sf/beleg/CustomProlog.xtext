@@ -49,7 +49,7 @@ Atom:
 ;
 
 List:
-	{List} '[]' | list=NonEmptyList
+	{List} '[]' | nonempty=NonEmptyList
 ;
 
 NonEmptyList:

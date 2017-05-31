@@ -3,12 +3,16 @@
  */
 package de.htwdd.sf.beleg.generator
 
+import de.htwdd.sf.beleg.customProlog.Atom
 import de.htwdd.sf.beleg.customProlog.Clause
+import de.htwdd.sf.beleg.customProlog.List
+import de.htwdd.sf.beleg.customProlog.NonEmptyList
 import de.htwdd.sf.beleg.customProlog.Predicate
 import de.htwdd.sf.beleg.customProlog.Prologdsl
 import de.htwdd.sf.beleg.customProlog.Query
 import de.htwdd.sf.beleg.customProlog.Rule
 import de.htwdd.sf.beleg.customProlog.Term
+import java.util.LinkedList
 import org.eclipse.emf.common.util.EList
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
@@ -31,68 +35,59 @@ class CustomPrologGenerator extends AbstractGenerator {
 		fsa.generateFile("prolog_s68407s72851.lsp", text)
 	}
 
-	/*  Liste -- nicht Funktionsfähig
-	 * 	
-	 * 	def transplitFolge(Folge folge) {
-	 * 		var ret = '(cons '
-	 * 				
-	 * 		if ( folge.atom.length() == 1 )
-	 * 			ret += folge.atom.get(0) + '()'
-	 * 			
-	 * 		else
-	 * 			ret += folge.atom.transplitRest
-	 * 					
-	 * 		ret += ')'
-	 * 		
-	 * 		return ret	
-	 * 	}
-	 * 	
-	 * 	def transplitRest(EList<Atom> atom) {
-	 * 		var ret = ""
-	 * 		var i = 0
-	 * 		if ( atom === null )
-	 * 			ret += '()'
-	 * 		else {
-	 * 			for (; atom !== null ; i++) {
-	 * 				ret += '(cons' + atom.last()
-	 * 				atom.remove(atom.last())
-	 * 			}
-	 * 			
-	 * 			ret += '()'
-	 * 			
-	 * 			for (; i > 0 ; i--) {
-	 * 				ret += ')'
-	 * 			}
-	 * 			
-	 * 		}
-	 * 		
-	 * 		return ret
-	 * 	}
-	 * 	
-	 * 	def transplitList(List list) {
-	 * 		var ret = ""
-	 * 		
-	 * 		if ( list === null )
-	 * 			ret += '()'
-	 * 		else {
-	 * 			ret += list.list.transplitNonEmptyList
-	 * 		}
-	 * 			
-	 * 		return ret
-	 * 	}
-	 * 	
-	 * 	def transplitNonEmptyList(NonEmptyList nonemptylist) {
-	 * 		var ret = ""
-	 * 		
-	 * 		if ( nonemptylist.folge !== null )
-	 * 			ret += nonemptylist.folge.transplitFolge
-	 * 		else {
-	 * 			ret += nonemptylist?.atom?.ident ?: ""
-	 * 		}
-	 * 		
-	 * 		return ret
-	 * 	}
-	 */
+	def transpileList(List l) {
+		var ret = "("
+		if (l === null) {
+			ret += ")"
+			return ret
+		}
+
+		if (l.nonempty !== null) {
+			ret += "("
+			ret += transpileNonEmptyList(l.nonempty)
+			ret += ")"
+		}
+		ret += ")"
+		return ret
+
+	}
+
+	def transpileNonEmptyList(NonEmptyList list) {
+		var ret = "cons "
+		if (list.atom !== null)
+			ret += " " + list.atom.ident
+		else if (list.folge !== null) {
+			var stack = new LinkedList<Atom>
+			var counter = 0
+			stack.addAll(list.folge.atom)
+			while (stack.isEmpty() != true) {
+				counter++
+				ret += "(cons " + stack.pop.ident + " "
+				if (stack.size == 0)
+					ret += "()"
+			}
+			for (var i = 0; i < counter; i++) {
+				ret += ")"
+			}
+		}
+		if (list.term !== null) {
+			ret += " " + list.term.atom.ident + " "
+		}
+		if (list?.term?.list !== null)
+			ret += list.term.list.transpileList
+
+		return ret
+	}
+
+	def transpileTerm(Term term) {
+		var ret = " "
+		if (term.atom !== null)
+			ret += term.atom.ident + " "
+		else if (term.list !== null)
+			ret += transpileList(term.list)
+		return ret
+	}
+
 	def transpileClauses(EList<Clause> clauses) {
 		var ret = ""
 		ret += ''
@@ -121,7 +116,8 @@ class CustomPrologGenerator extends AbstractGenerator {
 		if (predicate !== null && predicate.functor.funcName !== null) {
 			ret += '(' + predicate.functor.funcName
 			for (Term t : predicate?.term)
-				ret += ' ' + t?.atom?.ident ?: ""
+				ret += transpileTerm(t)
+			// ret += ' ' + t?.atom?.ident ?: ""
 			ret += ')'
 		}
 		return ret

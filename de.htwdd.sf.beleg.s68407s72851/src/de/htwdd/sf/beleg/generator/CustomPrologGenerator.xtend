@@ -36,7 +36,7 @@ class CustomPrologGenerator extends AbstractGenerator {
 	}
 
 	def transpileList(List l) {
-		var ret = "("
+		var ret = ""
 		if (l === null) {
 			ret += ")"
 			return ret
@@ -47,7 +47,9 @@ class CustomPrologGenerator extends AbstractGenerator {
 			ret += transpileNonEmptyList(l.nonempty)
 			ret += ")"
 		}
-		ret += ")"
+		else
+			ret += "()"
+		ret += ""
 		return ret
 
 	}
@@ -62,7 +64,7 @@ class CustomPrologGenerator extends AbstractGenerator {
 			stack.addAll(list.folge.atom)
 			while (stack.isEmpty() != true) {
 				counter++
-				ret += "(cons " + stack.pop.ident + " "
+				ret += " " + stack.pop.ident + " "
 				if (stack.size == 0)
 					ret += "()"
 			}

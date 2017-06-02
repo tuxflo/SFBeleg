@@ -20,6 +20,7 @@ import de.htwdd.sf.beleg.customProlog.Query
 import de.htwdd.sf.beleg.customProlog.Atom
 import de.htwdd.sf.beleg.customProlog.Rule
 import de.htwdd.sf.beleg.customProlog.NonEmptyList
+import de.htwdd.sf.beleg.customProlog.Folge
 
 /**
  * Provides labels for EObjects.
@@ -56,6 +57,10 @@ class CustomPrologLabelProvider extends DefaultEObjectLabelProvider {
 
 	def text(List l) {
 		'List'
+	}
+	
+	def text(Folge f) {
+		'Folge'
 	}
 
 	def text(Exquery e) {
